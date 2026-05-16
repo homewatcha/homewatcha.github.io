@@ -215,10 +215,11 @@ body {
 @media (max-width: 400px) {
     .surface-container {
         width: 100%;
-        height: 100vh;
+        max-height: 100vh; /* Ограничивает высоту контейнера, чтобы он не выходил за пределы экрана */
+        overflow-y: auto; /* Позволяет контенту внутри контейнера прокручиваться, если он слишком длинный */
         border-radius: 0;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start; /* Выравнивание контента сверху */
     }
 }
