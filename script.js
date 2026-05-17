@@ -23,7 +23,7 @@ async function fetchLastFmTrack() {
         const lastFmCard = document.createElement('section');
         lastFmCard.className = 'lastfm-card'; /* Simplified class */
         lastFmCard.innerHTML = `
-            <h2 class="label-large">NOW_PLAYING</h2>
+            <h2 class="label-large">LAST_PLAYED</h2>
             <div class="lastfm-content">
                 <img src="${albumArt}" alt="Album Art" class="lastfm-art">
                 <div class="lastfm-info">
@@ -32,7 +32,7 @@ async function fetchLastFmTrack() {
                 </div>
                 <a href="${trackUrl}" target="_blank" class="lastfm-link">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M18 11l-5 5-5-5h3v7h2v-7h3zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        <path d="M8 5v14l11-7z"/>
                     </svg>
                 </a>
             </div>
