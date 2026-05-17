@@ -221,26 +221,30 @@ body {
     border-radius: var(--border-radius-large);
     text-decoration: none;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: column; /* Reverted to column */
+    align-items: center; /* Vertically aligned items */
+    justify-content: center; /* Horizontally centered */
     gap: var(--spacing-small);
     transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
-    border: 1px solid var(--color-accent-3); /* Sky blue border */
+    border: 1px solid var(--color-accent-3);
 }
 
 .action-card:hover {
     background: var(--color-accent-3);
     color: var(--color-text-primary); 
-    transform: translateY(-3px); /* Subtle lift on hover */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.action-card .icon {
-    font-family: var(--font-family-system);
-    font-size: var(--font-size-medium);
-    opacity: 0.8;
-    word-break: break-word; 
-    color: var(--color-accent-2);
+.action-card .icon-img {
+    width: 24px; /* Slightly larger for vertical layout */
+    height: 24px;
+    filter: invert(30%) sepia(20%) saturate(1000%) hue-rotate(160deg) brightness(80%) contrast(90%); 
+    transition: filter 0.2s;
+}
+
+.action-card:hover .icon-img {
+    filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
 }
 
 /* Footer */
