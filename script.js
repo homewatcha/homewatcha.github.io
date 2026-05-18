@@ -45,4 +45,19 @@ async function fetchLastFmTrack() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', fetchLastFmTrack);
+function setupAvatarAudio() {
+    const avatar = document.querySelector('.avatar');
+    const audio = document.getElementById('avatar-audio');
+    
+    if (avatar && audio) {
+        avatar.addEventListener('click', () => {
+            audio.currentTime = 0; // Reset to start if already playing
+            audio.play().catch(e => console.error('Audio playback failed:', e));
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchLastFmTrack();
+    setupAvatarAudio();
+});
