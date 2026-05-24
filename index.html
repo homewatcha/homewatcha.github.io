@@ -4,15 +4,312 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watcha | just linux user</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Removed M3 fonts, relying on system fonts -->
+    <style>
+        :root {
+            --color-background-primary: #FDF8F0;
+            --color-text-primary: #333333;
+            --color-text-secondary: #777777;
+            --color-accent-1: #F5C7B9;
+            --color-accent-2: #4A7B9D;
+            --color-accent-3: #A8D8F0;
+
+            --font-family-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-size-small: 0.7rem;
+            --font-size-medium: 0.9rem;
+            --font-size-large: 1.1rem;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-bold: 700;
+
+            --spacing-small: 0.5rem;
+            --spacing-medium: 1rem;
+            --spacing-large: 1.5rem;
+            --border-radius-subtle: 4px;
+            --border-radius-medium: 8px;
+            --border-radius-large: 16px;
+            --border-radius-extra-large: 28px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* FIX: body теперь скроллится сам, без align-items: center */
+        body {
+            background-color: var(--color-background-primary);
+            color: var(--color-text-primary);
+            font-family: var(--font-family-system);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* FIX: было center — блокировало скролл */
+            overflow-x: hidden;
+            padding: var(--spacing-medium);
+        }
+
+        .surface-container {
+            width: 100%;
+            max-width: 440px;
+            background: #F7F7F7;
+            border-radius: var(--border-radius-extra-large);
+            padding: var(--spacing-large) var(--spacing-medium);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            animation: fadeIn 1s cubic-bezier(0.2, 0, 0, 1) forwards;
+            /* FIX: убран overflow-y: auto — скролл теперь идёт через body */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        .display-large {
+            font-family: var(--font-family-system);
+            font-size: 2.0rem;
+            font-weight: var(--font-weight-bold);
+            letter-spacing: -0.5px;
+            margin-bottom: var(--spacing-small);
+            color: var(--color-accent-2);
+            line-height: 1.2;
+        }
+
+        .title-medium {
+            font-size: var(--font-size-large);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-medium);
+            opacity: 0.8;
+        }
+
+        .label-large {
+            font-family: var(--font-family-system);
+            font-size: var(--font-size-small);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-accent-1);
+        }
+
+        .body-large {
+            font-size: var(--font-size-large);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+        }
+
+        /* Profile Section */
+        .profile-header {
+            margin-bottom: var(--spacing-large);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius-extra-large);
+            box-shadow: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar:active {
+            transform: scale(0.95);
+        }
+
+        /* Cards */
+        .bio-card, .lastfm-card {
+            background: transparent;
+            padding: var(--spacing-large);
+            border-radius: var(--border-radius-large);
+            margin-bottom: var(--spacing-medium);
+            text-align: left;
+            border: none;
+            box-shadow: none;
+        }
+
+        .bio-card h2, .lastfm-card h2 {
+            color: var(--color-accent-1);
+            margin-bottom: var(--spacing-small);
+            display: block;
+            font-family: var(--font-family-system);
+            font-size: var(--font-size-small);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: var(--font-weight-bold);
+        }
+
+        .lastfm-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .lastfm-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-medium);
+            margin-top: var(--spacing-small);
+        }
+
+        .lastfm-art {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--border-radius-medium);
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .lastfm-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            overflow: hidden;
+        }
+
+        .track-name {
+            font-weight: var(--font-weight-medium);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--color-text-primary);
+        }
+
+        .artist-name {
+            font-size: var(--font-size-medium);
+            opacity: 0.8;
+            color: var(--color-text-secondary);
+        }
+
+        .lastfm-link {
+            color: var(--color-accent-2);
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--color-accent-3);
+            border-radius: var(--border-radius-medium);
+            padding: var(--spacing-small);
+        }
+
+        .lastfm-link:hover {
+            opacity: 1;
+        }
+
+        /* Actions Grid */
+        .actions-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-medium);
+            margin-bottom: var(--spacing-large);
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .action-card {
+            background: transparent;
+            color: var(--color-text-primary);
+            padding: var(--spacing-medium);
+            border-radius: var(--border-radius-large);
+            text-decoration: none;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: var(--spacing-medium);
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid var(--color-accent-3);
+            width: 100%;
+        }
+
+        .action-card span {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .action-card:hover {
+            background: var(--color-accent-3);
+            color: var(--color-text-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-card .icon-img {
+            width: 24px;
+            height: 24px;
+            filter: invert(30%) sepia(20%) saturate(1000%) hue-rotate(160deg) brightness(80%) contrast(90%);
+            transition: filter 0.2s;
+        }
+
+        .action-card:hover .icon-img {
+            filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+        }
+
+        @media (min-width: 600px) {
+            body {
+                align-items: center; /* На десктопе центрируем вертикально — там скролл не нужен */
+            }
+            .surface-container {
+                width: 80%;
+                max-width: 480px;
+                margin: auto;
+            }
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            display: flex;
+            justify-content: center;
+            margin-top: var(--spacing-large);
+        }
+
+        .chip-text {
+            font-size: var(--font-size-small);
+            color: var(--color-text-secondary);
+            opacity: 0.6;
+        }
+
+        /* FIX: на маленьких экранах убран overflow-y: auto с контейнера */
+        @media (max-width: 400px) {
+            .surface-container {
+                width: 100%;
+                border-radius: var(--border-radius-large);
+                padding: var(--spacing-large) var(--spacing-small);
+            }
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <main class="surface-container">
         <header class="profile-header">
             <div class="avatar-container">
                 <img src="madeline.jpg" alt="Madeline" class="avatar">
-                <!-- Status indicator removed -->
             </div>
             <h1 class="display-large">Watcha</h1>
             <p class="title-medium">just linux user</p>
@@ -48,6 +345,70 @@
     </main>
 
     <audio id="avatar-audio" src="assets/survivor-meow.mp3"></audio>
-    <script src="script.js"></script>
+
+    <script>
+        async function fetchLastFmTrack() {
+            const USERNAME = 'Smotry993';
+            const API_KEY = 'a8b311fd965e7325a95e48eaecd721b9';
+            const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${USERNAME}&api_key=${API_KEY}&format=json&limit=1`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                const track = data.recenttracks.track[0];
+
+                if (!track) return;
+
+                const artist = track.artist['#text'];
+                const trackName = track.name;
+                const albumArt = track.image[2]['#text'] || 'https://via.placeholder.com/150';
+                const trackUrl = track.url;
+
+                const bioCard = document.querySelector('.bio-card');
+
+                const lastFmCard = document.createElement('section');
+                lastFmCard.className = 'lastfm-card';
+                lastFmCard.innerHTML = `
+                    <h2 class="label-large">LAST_PLAYED</h2>
+                    <div class="lastfm-content">
+                        <img src="${albumArt}" alt="Album Art" class="lastfm-art">
+                        <div class="lastfm-info">
+                            <p class="body-large track-name">${trackName}</p>
+                            <p class="title-medium artist-name">${artist}</p>
+                        </div>
+                        <a href="${trackUrl}" target="_blank" class="lastfm-link">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </a>
+                    </div>
+                `;
+
+                bioCard.after(lastFmCard);
+
+            } catch (error) {
+                console.error('Error fetching Last.fm track:', error);
+            }
+        }
+
+        function setupAvatarAudio() {
+            const avatar = document.querySelector('.avatar');
+            const audio = document.getElementById('avatar-audio');
+
+            if (avatar && audio) {
+                avatar.addEventListener('click', () => {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.error('Audio playback failed:', e));
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLastFmTrack();
+            setupAvatarAudio();
+        });
+    </script>
 </body>
 </html>
