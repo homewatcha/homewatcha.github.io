@@ -899,6 +899,24 @@
                 }
             });
 
+            // Touch support for drag states to prevent conflicts with custom animations
+            carousel.addEventListener('touchstart', () => {
+                isDown = true;
+                isProgrammaticScroll = false; // Halt any running custom smooth scroll
+            }, { passive: true });
+
+            window.addEventListener('touchend', () => {
+                if (isDown) {
+                    isDown = false;
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchcancel', () => {
+                if (isDown) {
+                    isDown = false;
+                }
+            }, { passive: true });
+
             carousel.addEventListener('mousemove', (e) => {
                 // Failsafe: if left mouse button is released (even outside window), abort drag and snap
                 if (isDown && (e.buttons & 1) === 0) {
