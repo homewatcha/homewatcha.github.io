@@ -94,11 +94,17 @@
             margin: 0 auto var(--spacing-small) auto; /* Center alignment */
             opacity: 0.95;
             transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: pointer;
+            user-select: none; /* Prevent accidental text highlighting during clicks */
         }
 
         .title-medium:hover {
             background: rgba(59, 117, 148, 0.15);
             transform: scale(1.03); /* Soft pulse on hover */
+        }
+
+        .title-medium:active {
+            transform: scale(0.95); /* Tactile click feedback */
         }
 
         .label-large {
@@ -715,6 +721,22 @@
             }
         }
 
+        function setupDescriptionGimmick() {
+            const desc = document.querySelector('.profile-header .title-medium');
+            if (!desc) return;
+
+            const text1 = 'just linux user';
+            const text2 = 'прсдртя';
+
+            desc.addEventListener('click', () => {
+                if (desc.textContent === text1) {
+                    desc.textContent = text2;
+                } else {
+                    desc.textContent = text1;
+                }
+            });
+        }
+
         function setupWhoamiCarousel() {
             const carousel = document.getElementById('whoami-carousel');
             const cards = document.querySelectorAll('.carousel-card');
@@ -1055,6 +1077,7 @@
             fetchLastFmTrack();
             setupAvatarAudio();
             setupWhoamiCarousel();
+            setupDescriptionGimmick();
         });
     </script>
 </body>
