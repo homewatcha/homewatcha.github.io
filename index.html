@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watcha | just linux user</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..1000&display=swap" rel="stylesheet">
     <style>
         :root {
             --color-background-primary: #FDF8F0;
             --color-text-primary: #333333;
             --color-text-secondary: #777777;
-            --color-accent-1: #F5C7B9;
-            --color-accent-2: #4A7B9D;
-            --color-accent-3: #A8D8F0;
+            --color-accent-1: #F2A794; /* Madeline's warm amber-ginger hair (Terracotta) */
+            --color-accent-2: #3B7594; /* Madeline's mountain cyan-teal coat (Primary Tonal Blue) */
+            --color-accent-3: #9ACCE6; /* Light sky cyan blue */
 
-            --font-family-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-family-system: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --font-size-small: 0.7rem;
             --font-size-medium: 0.9rem;
             --font-size-large: 1.1rem;
@@ -79,11 +82,23 @@
         }
 
         .title-medium {
-            font-size: var(--font-size-large);
+            display: inline-flex;
+            align-items: center;
+            font-size: var(--font-size-medium);
             font-weight: var(--font-weight-medium);
-            color: var(--color-text-secondary);
-            margin-bottom: var(--spacing-medium);
-            opacity: 0.8;
+            color: #20506A; /* Tonal primary dark text */
+            background: rgba(59, 117, 148, 0.08); /* Soft primary container background */
+            padding: 6px 16px;
+            border-radius: 100px; /* Beautiful rounded pill */
+            border: 1px solid rgba(59, 117, 148, 0.15);
+            margin: 0 auto var(--spacing-small) auto; /* Center alignment */
+            opacity: 0.95;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .title-medium:hover {
+            background: rgba(59, 117, 148, 0.15);
+            transform: scale(1.03); /* Soft pulse on hover */
         }
 
         .label-large {
@@ -103,6 +118,10 @@
 
         /* Profile Section */
         .profile-header {
+            background: #FFFFFF; /* Pure white container card nested inside grey background */
+            border-radius: var(--border-radius-large);
+            padding: var(--spacing-large) var(--spacing-medium);
+            border: 1.5px solid rgba(0, 0, 0, 0.05); /* Soft premium outline */
             margin-bottom: var(--spacing-large);
         }
 
@@ -134,17 +153,16 @@
         }
 
         /* Cards */
-        .bio-card, .lastfm-card {
-            background: transparent;
+        .lastfm-card {
+            background: #FFFFFF; /* Pure white container card nested inside grey background */
             padding: var(--spacing-large);
             border-radius: var(--border-radius-large);
+            border: 1.5px solid rgba(0, 0, 0, 0.05); /* Soft premium outline */
             margin-bottom: var(--spacing-medium);
             text-align: left;
-            border: none;
-            box-shadow: none;
         }
 
-        .bio-card h2, .lastfm-card h2 {
+        .lastfm-card h2 {
             color: var(--color-accent-1);
             margin-bottom: var(--spacing-small);
             display: block;
@@ -153,6 +171,213 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             font-weight: var(--font-weight-bold);
+        }
+
+        /* Carousel Component */
+        .carousel-section {
+            width: 100%;
+            margin-bottom: var(--spacing-medium);
+            position: relative;
+        }
+
+        .carousel-viewport {
+            overflow: visible;
+            width: 100%;
+            position: relative;
+        }
+
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+            padding: 0 7%; /* Center padding (brings cards closer to edges) */
+            gap: 10px; /* Reduced gap (brings cards closer together) */
+            cursor: grab;
+            user-select: none;
+            position: relative; /* Establish offsetParent context for children */
+        }
+
+        .carousel-container.grabbing {
+            cursor: grabbing;
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .carousel-card {
+            flex: 0 0 86%; /* Larger cards */
+            width: 86%;
+            background: #FFFFFF;
+            border-radius: var(--border-radius-large);
+            padding: var(--spacing-large);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        border-color 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        background-color 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            opacity: 0.78; /* Brighter side cards as requested */
+            transform: scale(0.97); /* Very subtle scaling to keep them larger and closer */
+            box-shadow: none; /* Shadow-free as requested */
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-medium);
+            text-align: left;
+            border: 1.5px solid rgba(0, 0, 0, 0.08); /* Flat Outline Card style */
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .carousel-card.active {
+            opacity: 1;
+            transform: scale(1); /* Full size when active */
+            box-shadow: none; /* Shadow-free as requested */
+            cursor: default;
+        }
+
+        /* Color Coding and Accent borders for M3 */
+        .card-hardware {
+            background: rgba(59, 117, 148, 0.06); /* Soft slate blue background */
+            border-color: rgba(59, 117, 148, 0.22); /* Soft slate blue outline */
+        }
+
+        .card-bio {
+            background: rgba(242, 167, 148, 0.09); /* Soft peach/pink background */
+            border-color: rgba(242, 167, 148, 0.35); /* Soft peach/pink outline */
+        }
+
+        .card-hobbies {
+            background: rgba(154, 204, 230, 0.12); /* Soft light sky blue background */
+            border-color: rgba(154, 204, 230, 0.45); /* Soft light sky blue outline */
+        }
+
+        .carousel-card h2.label-large {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-small);
+            width: 100%;
+            font-size: 0.82rem; /* Increased from 0.7rem for superb legibility */
+            letter-spacing: 1.2px;
+        }
+
+        /* High-contrast accessible text colors for M3 card headers */
+        .card-hardware h2.label-large {
+            color: #20506A; /* Rich deep slate blue */
+        }
+
+        .card-bio h2.label-large {
+            color: #8A3A28; /* Rich deep terracotta / rust-pink */
+        }
+
+        .card-hobbies h2.label-large {
+            color: #154B68; /* Rich deep ocean blue */
+        }
+
+        .carousel-card .card-icon {
+            font-size: 1.2rem;
+            display: inline-block;
+        }
+
+        /* Hardware Card Content */
+        .spec-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .spec-row {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-medium);
+        }
+
+        .spec-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .spec-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .spec-label {
+            font-size: var(--font-size-small);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: var(--font-weight-medium);
+        }
+
+        .spec-value {
+            font-size: var(--font-size-medium);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+        }
+
+        /* Hobbies Card Content */
+        .hobbies-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: var(--spacing-small);
+        }
+
+        .hobby-chip {
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: var(--font-size-medium);
+            font-weight: var(--font-weight-medium);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            user-select: none;
+        }
+
+        .card-hobbies .hobby-chip {
+            background: rgba(168, 216, 240, 0.15);
+            color: #2C5E7A;
+            border: 1px solid rgba(168, 216, 240, 0.3);
+        }
+
+        .card-hobbies .hobby-chip:hover {
+            background: rgba(168, 216, 240, 0.30);
+            transform: translateY(-1px);
+        }
+
+        /* Indicators */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: var(--spacing-medium);
+            margin-bottom: var(--spacing-medium);
+        }
+
+        .indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .indicator-dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: var(--color-accent-2);
         }
 
         .lastfm-card {
@@ -212,15 +437,19 @@
             opacity: 1;
         }
 
-        /* Actions Grid */
+        /* Actions Grid (Material Design Segmented List Container) */
         .actions-grid {
+            background: #FFFFFF; /* Pure white container card nested inside grey background */
+            border-radius: var(--border-radius-large);
+            padding: 0; /* Zero padding to let segments touch the outer border perfectly */
+            overflow: hidden; /* Clips hover background highlights to the card's rounded corners */
+            border: 1.5px solid rgba(0, 0, 0, 0.05); /* Soft premium outline */
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: var(--spacing-medium);
+            gap: 0; /* Zero gap to connect all segments together */
             margin-bottom: var(--spacing-large);
-            width: 100%;
-            max-width: 400px;
+            width: 100%; /* Spans full parent width, aligning pixel-perfectly with other cards */
             margin-left: auto;
             margin-right: auto;
         }
@@ -228,30 +457,43 @@
         .action-card {
             background: transparent;
             color: var(--color-text-primary);
-            padding: var(--spacing-medium);
-            border-radius: var(--border-radius-large);
+            padding: var(--spacing-medium) var(--spacing-large); /* Comfort padding for segments */
             text-decoration: none;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: flex-start;
             gap: var(--spacing-medium);
-            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
-            border: 1px solid var(--color-accent-3);
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: none;
+            border-bottom: 1.5px solid rgba(0, 0, 0, 0.04); /* Elegant segment divider */
             width: 100%;
+        }
+
+        .action-card:last-child {
+            border-bottom: none; /* No divider at the bottom of the last segment */
         }
 
         .action-card span {
             display: flex;
             align-items: center;
             height: 100%;
+            font-weight: var(--font-weight-medium);
         }
 
         .action-card:hover {
-            background: var(--color-accent-3);
-            color: var(--color-text-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(59, 117, 148, 0.08); /* Soft tonal primary container highlight */
+            color: #20506A; /* Tonal primary dark text highlight */
+            /* Removed transform from card itself to prevent crooked highlight gap! */
+        }
+
+        /* Slide ONLY the text span on hover for a flawless, clean expanding effect! */
+        .action-card span {
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .action-card:hover span {
+            transform: translateX(6px); /* Text slides 6px to the right, icon stays static */
         }
 
         .action-card .icon-img {
@@ -315,9 +557,77 @@
             <p class="title-medium">just linux user</p>
         </header>
 
-        <section class="bio-card">
-            <h2 class="label-large">SYSTEM_WHOAMI</h2>
-            <p class="body-large">просто сижу дома, страдаю фигнёй, поигрываю в osu! и Geometry Dash, сижу на Cachy OS с noctalia shell на niri, и по мелочи.</p>
+        <section class="carousel-section">
+            <div class="carousel-viewport">
+                <div class="carousel-container" id="whoami-carousel">
+                    <!-- Left Card: SYSTEM_HARDWARE -->
+                    <div class="carousel-card card-hardware">
+                        <h2 class="label-large">
+                            <span class="card-icon">💻</span>SYSTEM_HARDWARE
+                        </h2>
+                        <div class="spec-list">
+                            <div class="spec-row">
+                                <span class="spec-icon" style="background: rgba(74, 123, 157, 0.1); color: var(--color-accent-2);">⚡</span>
+                                <div class="spec-info">
+                                    <span class="spec-label">Процессор</span>
+                                    <span class="spec-value">Ryzen 7 5700X</span>
+                                </div>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-icon" style="background: rgba(74, 123, 157, 0.1); color: var(--color-accent-2);">🎮</span>
+                                <div class="spec-info">
+                                    <span class="spec-label">Видеокарта</span>
+                                    <span class="spec-value">RTX 4070</span>
+                                </div>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-icon" style="background: rgba(74, 123, 157, 0.1); color: var(--color-accent-2);">💾</span>
+                                <div class="spec-info">
+                                    <span class="spec-label">Память</span>
+                                    <span class="spec-value">16GB DDR4 3600MHz</span>
+                                </div>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-icon" style="background: rgba(74, 123, 157, 0.1); color: var(--color-accent-2);">💿</span>
+                                <div class="spec-info">
+                                    <span class="spec-label">Окружение</span>
+                                    <span class="spec-value">CachyOS / niri</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Card: SYSTEM_WHOAMI -->
+                    <div class="carousel-card card-bio">
+                        <h2 class="label-large">
+                            <span class="card-icon">👤</span>SYSTEM_WHOAMI
+                        </h2>
+                        <p class="body-large">16-летний беларус, сижу дома, ниче не делаю, играю, сижу в чатах, люблю музяку</p>
+                    </div>
+
+                    <!-- Right Card: SYSTEM_HOBBIES -->
+                    <div class="carousel-card card-hobbies">
+                        <h2 class="label-large">
+                            <span class="card-icon">✨</span>SYSTEM_PASSIONS
+                        </h2>
+                        <div class="hobbies-grid">
+                            <span class="hobby-chip">🔴 osu!</span>
+                            <span class="hobby-chip">📐 Geometry Dash</span>
+                            <span class="hobby-chip">❄️ Linux Ricing</span>
+                            <span class="hobby-chip">🎶 Music</span>
+                            <span class="hobby-chip">💻 Coding</span>
+                            <span class="hobby-chip">🎬 Anime</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lower Carousel Indicators -->
+            <div class="carousel-indicators">
+                <span class="indicator-dot" data-index="0"></span>
+                <span class="indicator-dot active" data-index="1"></span>
+                <span class="indicator-dot" data-index="2"></span>
+            </div>
         </section>
 
         <nav class="actions-grid">
@@ -366,7 +676,7 @@
                 const albumArt = track.image[2]['#text'] || 'https://via.placeholder.com/150';
                 const trackUrl = track.url;
 
-                const bioCard = document.querySelector('.bio-card');
+                const bioCard = document.querySelector('.carousel-section');
 
                 const lastFmCard = document.createElement('section');
                 lastFmCard.className = 'lastfm-card';
@@ -405,9 +715,233 @@
             }
         }
 
+        function setupWhoamiCarousel() {
+            const carousel = document.getElementById('whoami-carousel');
+            const cards = document.querySelectorAll('.carousel-card');
+            const dots = document.querySelectorAll('.indicator-dot');
+
+            if (!carousel || cards.length === 0 || dots.length === 0) return;
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let hasDragged = false;
+            const dragThreshold = 6; // px
+
+            // Momentum variables
+            let lastX;
+            let lastTime;
+            let velocity = 0;
+
+            function updateActiveCard() {
+                let closestCard = null;
+                let closestDistance = Infinity;
+                const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2;
+
+                cards.forEach((card, index) => {
+                    const cardCenter = card.offsetLeft + card.clientWidth / 2;
+                    const distance = Math.abs(carouselCenter - cardCenter);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestCard = card;
+                    }
+                });
+
+                cards.forEach((card, index) => {
+                    if (card === closestCard) {
+                        card.classList.add('active');
+                        dots[index].classList.add('active');
+                    } else {
+                        card.classList.remove('active');
+                        dots[index].classList.remove('active');
+                    }
+                });
+            }
+
+            function getTargetCardIndex() {
+                let closestIndex = 1;
+                let closestDistance = Infinity;
+                
+                // Add velocity bias (predicted stopping distance based on speed and direction)
+                const bias = velocity * 130; // px
+                const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2 - bias;
+
+                cards.forEach((card, index) => {
+                    const cardCenter = card.offsetLeft + card.clientWidth / 2;
+                    const distance = Math.abs(carouselCenter - cardCenter);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestIndex = index;
+                    }
+                });
+                return closestIndex;
+            }
+
+            let isProgrammaticScroll = false;
+
+            function scrollToCard(index) {
+                const card = cards[index];
+                if (!card) return;
+                
+                const scrollPos = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
+                const diff = Math.abs(carousel.scrollLeft - scrollPos);
+
+                if (diff < 4) {
+                    isProgrammaticScroll = true;
+                    carousel.style.scrollBehavior = 'auto';
+                    carousel.scrollLeft = scrollPos;
+                    updateActiveCard();
+                    setTimeout(() => {
+                        isProgrammaticScroll = false;
+                    }, 50);
+                } else {
+                    isProgrammaticScroll = true;
+                    carousel.style.scrollBehavior = 'smooth';
+                    carousel.scrollTo({
+                        left: scrollPos
+                    });
+                    
+                    // Failsafe timeout to prevent flag from getting stuck in any browser
+                    clearTimeout(carousel._failsafeTimeout);
+                    carousel._failsafeTimeout = setTimeout(() => {
+                        isProgrammaticScroll = false;
+                    }, 600);
+                }
+            }
+
+            // Click dots to scroll
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const index = parseInt(dot.getAttribute('data-index'));
+                    scrollToCard(index);
+                });
+            });
+
+            // Click side cards to scroll (if not dragged)
+            cards.forEach((card, index) => {
+                card.addEventListener('click', (e) => {
+                    if (hasDragged) {
+                        e.preventDefault();
+                        return;
+                    }
+                    if (!card.classList.contains('active')) {
+                        scrollToCard(index);
+                    }
+                });
+            });
+
+            // Prevent native drag ghosting on links, images and cards
+            carousel.addEventListener('dragstart', (e) => {
+                e.preventDefault();
+            });
+
+            // Mouse Drag-to-Scroll support with native momentum snap-back
+            carousel.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return; // Only allow dragging with the left mouse button
+                isDown = true;
+                hasDragged = false;
+                carousel.classList.add('grabbing');
+                startX = e.pageX - carousel.offsetLeft;
+                scrollLeft = carousel.scrollLeft;
+                velocity = 0;
+                lastX = e.pageX;
+                lastTime = performance.now();
+                carousel.style.scrollBehavior = 'auto'; // Disable transitions during drag
+            });
+
+            // Handle window-wide mouseup to guarantee snapping regardless of release position
+            window.addEventListener('mouseup', () => {
+                if (isDown) {
+                    isDown = false;
+                    carousel.classList.remove('grabbing');
+                    const targetIndex = getTargetCardIndex();
+                    scrollToCard(targetIndex);
+                }
+            });
+
+            carousel.addEventListener('mousemove', (e) => {
+                // Failsafe: if left mouse button is released (even outside window), abort drag and snap
+                if (isDown && (e.buttons & 1) === 0) {
+                    isDown = false;
+                    carousel.classList.remove('grabbing');
+                    const targetIndex = getTargetCardIndex();
+                    scrollToCard(targetIndex);
+                    return;
+                }
+
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - carousel.offsetLeft;
+                const dist = x - startX;
+                if (Math.abs(dist) > dragThreshold) {
+                    hasDragged = true;
+                }
+
+                // Calculate drag velocity / speed
+                const now = performance.now();
+                const dt = now - lastTime;
+                if (dt > 0) {
+                    const dx = e.pageX - lastX;
+                    velocity = velocity * 0.15 + (dx / dt) * 0.85; // Filter velocity spikes
+                }
+                lastX = e.pageX;
+                lastTime = now;
+
+                // 1.0x sensitivity multiplier for natural, stable, hand-matching speed!
+                carousel.scrollLeft = scrollLeft - dist * 1.0;
+            });
+
+            // Handle window resize to keep centered
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    const activeIndex = Array.from(cards).findIndex(card => card.classList.contains('active'));
+                    if (activeIndex !== -1) {
+                        scrollToCard(activeIndex);
+                    }
+                }, 100);
+            });
+
+            // Native scrollend event fires when scroll momentum or programmatic smooth scroll stops
+            carousel.addEventListener('scrollend', () => {
+                if (isDown) return; // Don't snap while dragging
+                if (isProgrammaticScroll) {
+                    isProgrammaticScroll = false;
+                    clearTimeout(carousel._failsafeTimeout);
+                    return;
+                }
+                const targetIndex = getTargetCardIndex();
+                scrollToCard(targetIndex);
+            });
+
+            // Handle active card updating and scrollend fallback for older browsers
+            let scrollTimeout;
+            carousel.addEventListener('scroll', () => {
+                updateActiveCard();
+                
+                // Fallback for browsers that do not support scrollend natively
+                if (!('onscrollend' in window)) {
+                    if (isDown || isProgrammaticScroll) return;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        const targetIndex = getTargetCardIndex();
+                        scrollToCard(targetIndex);
+                    }, 150);
+                }
+            });
+
+            // Center initial card on page load
+            setTimeout(() => {
+                scrollToCard(1); // 1 is index of SYSTEM_WHOAMI (center)
+                updateActiveCard();
+            }, 150);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchLastFmTrack();
             setupAvatarAudio();
+            setupWhoamiCarousel();
         });
     </script>
 </body>
