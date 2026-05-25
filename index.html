@@ -722,16 +722,8 @@
 
             if (!carousel || cards.length === 0 || dots.length === 0) return;
 
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-            let hasDragged = false;
-            const dragThreshold = 6; // px
-
-            // Momentum variables
-            let lastX;
-            let lastTime;
-            let velocity = 0;
+            // Detect touch screens (smartphones, tablets)
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
             function updateActiveCard() {
                 let closestCard = null;
@@ -757,6 +749,69 @@
                     }
                 });
             }
+
+            if (isTouchDevice) {
+                // 100% Native CSS scroll snapping on mobile/touch screens!
+                // This completely prevents any double-movement or lag.
+                carousel.style.scrollSnapType = 'x mandatory';
+                cards.forEach(card => {
+                    card.style.scrollSnapAlign = 'center';
+                });
+
+                // Update active indicators and scaling/opacity natively on scroll
+                carousel.addEventListener('scroll', updateActiveCard);
+
+                // Click dots to scroll natively
+                dots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const index = parseInt(dot.getAttribute('data-index'));
+                        const card = cards[index];
+                        const scrollPos = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
+                        carousel.style.scrollBehavior = 'smooth';
+                        carousel.scrollTo({ left: scrollPos });
+                    });
+                });
+
+                // Click side cards to scroll natively
+                cards.forEach((card, index) => {
+                    card.addEventListener('click', () => {
+                        if (!card.classList.contains('active')) {
+                            const scrollPos = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
+                            carousel.style.scrollBehavior = 'smooth';
+                            carousel.scrollTo({ left: scrollPos });
+                        }
+                    });
+                });
+
+                // Center initial card on page load
+                setTimeout(() => {
+                    const card = cards[1];
+                    const scrollPos = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
+                    carousel.style.scrollBehavior = 'auto';
+                    carousel.scrollLeft = scrollPos;
+                    updateActiveCard();
+                }, 150);
+
+                // Exit immediately! Do NOT bind any mouse, scrollend, or custom JS animations.
+                return;
+            }
+
+            // Desktop-only JS drag-to-scroll, grab cursors, and custom velocity snapping
+            carousel.style.scrollSnapType = 'none';
+            cards.forEach(card => {
+                card.style.scrollSnapAlign = 'none';
+            });
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let hasDragged = false;
+            const dragThreshold = 6; // px
+
+            // Momentum variables
+            let lastX;
+            let lastTime;
+            let velocity = 0;
 
             function getTargetCardIndex() {
                 let closestIndex = 1;
