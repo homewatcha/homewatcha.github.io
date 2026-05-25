@@ -613,10 +613,10 @@
                         <div class="hobbies-grid">
                             <span class="hobby-chip">🔴 osu!</span>
                             <span class="hobby-chip">📐 Geometry Dash</span>
-                            <span class="hobby-chip">❄️ Linux Ricing</span>
+                            <span class="hobby-chip">🥧 Celeste</span>
+                            <span class="hobby-chip">❄️ Linux </span>   
                             <span class="hobby-chip">🎶 Music</span>
-                            <span class="hobby-chip">💻 Coding</span>
-                            <span class="hobby-chip">🎬 Anime</span>
+                            <span class="hobby-chip">💻 Chats</span>
                         </div>
                     </div>
                 </div>
@@ -686,7 +686,7 @@
                         <img src="${albumArt}" alt="Album Art" class="lastfm-art">
                         <div class="lastfm-info">
                             <p class="body-large track-name">${trackName}</p>
-                            <p class="title-medium artist-name">${artist}</p>
+                            <p class="artist-name">${artist}</p>
                         </div>
                         <a href="${trackUrl}" target="_blank" class="lastfm-link">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -779,7 +779,43 @@
 
             let isProgrammaticScroll = false;
 
-            function scrollToCard(index) {
+            function animateScroll(target, duration) {
+                const start = carousel.scrollLeft;
+                const change = target - start;
+                const startTime = performance.now();
+
+                isProgrammaticScroll = true;
+
+                function easeOutCubic(t, b, c, d) {
+                    t /= d;
+                    t--;
+                    return c * (t * t * t + 1) + b;
+                }
+
+                function step(currentTime) {
+                    if (isDown) {
+                        isProgrammaticScroll = false;
+                        return;
+                    }
+
+                    const elapsedTime = currentTime - startTime;
+                    if (elapsedTime >= duration) {
+                        carousel.scrollLeft = target;
+                        updateActiveCard();
+                        setTimeout(() => {
+                            isProgrammaticScroll = false;
+                        }, 50);
+                    } else {
+                        carousel.scrollLeft = easeOutCubic(elapsedTime, start, change, duration);
+                        updateActiveCard();
+                        requestAnimationFrame(step);
+                    }
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            function scrollToCard(index, useSlowAnimation = false) {
                 const card = cards[index];
                 if (!card) return;
                 
@@ -794,7 +830,11 @@
                     setTimeout(() => {
                         isProgrammaticScroll = false;
                     }, 50);
+                } else if (useSlowAnimation) {
+                    // Beautiful custom slow snapping animation (relaxed 550ms easeOutCubic)
+                    animateScroll(scrollPos, 550);
                 } else {
+                    // Standard fast browser smooth scroll for desktop mouse drag or dot/card clicks
                     isProgrammaticScroll = true;
                     carousel.style.scrollBehavior = 'smooth';
                     carousel.scrollTo({
@@ -813,7 +853,7 @@
             dots.forEach(dot => {
                 dot.addEventListener('click', () => {
                     const index = parseInt(dot.getAttribute('data-index'));
-                    scrollToCard(index);
+                    scrollToCard(index, false); // Snappy native scroll for direct clicks
                 });
             });
 
@@ -825,7 +865,7 @@
                         return;
                     }
                     if (!card.classList.contains('active')) {
-                        scrollToCard(index);
+                        scrollToCard(index, false); // Snappy native scroll for direct clicks
                     }
                 });
             });
@@ -855,7 +895,7 @@
                     isDown = false;
                     carousel.classList.remove('grabbing');
                     const targetIndex = getTargetCardIndex();
-                    scrollToCard(targetIndex);
+                    scrollToCard(targetIndex, false); // Keep mouse snapping exactly as is (fast/snappy)
                 }
             });
 
@@ -865,7 +905,7 @@
                     isDown = false;
                     carousel.classList.remove('grabbing');
                     const targetIndex = getTargetCardIndex();
-                    scrollToCard(targetIndex);
+                    scrollToCard(targetIndex, false); // Keep mouse snapping exactly as is
                     return;
                 }
 
@@ -898,7 +938,7 @@
                 resizeTimeout = setTimeout(() => {
                     const activeIndex = Array.from(cards).findIndex(card => card.classList.contains('active'));
                     if (activeIndex !== -1) {
-                        scrollToCard(activeIndex);
+                        scrollToCard(activeIndex, false);
                     }
                 }, 100);
             });
@@ -912,7 +952,7 @@
                     return;
                 }
                 const targetIndex = getTargetCardIndex();
-                scrollToCard(targetIndex);
+                scrollToCard(targetIndex, true); // Use slow, gentle custom animation for native touch swipes/momentum!
             });
 
             // Handle active card updating and scrollend fallback for older browsers
@@ -926,14 +966,14 @@
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(() => {
                         const targetIndex = getTargetCardIndex();
-                        scrollToCard(targetIndex);
+                        scrollToCard(targetIndex, true); // Use slow animation for swipe fallback
                     }, 150);
                 }
             });
 
             // Center initial card on page load
             setTimeout(() => {
-                scrollToCard(1); // 1 is index of SYSTEM_WHOAMI (center)
+                scrollToCard(1, false); // 1 is index of SYSTEM_WHOAMI (center)
                 updateActiveCard();
             }, 150);
         }
