@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watcha | just linux user</title>
-    <link rel="icon" type="image/png" href="assets/icons/browser_icon.png">
+    <link rel="icon" type="image/png" href="assets/icons/browser_icon.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..1000&display=swap" rel="stylesheet">
@@ -449,7 +449,37 @@
             color: var(--color-text-secondary);
         }
 
+        .lastfm-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
         .lastfm-link {
+            color: var(--color-text-secondary);
+            opacity: 0.65;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            text-decoration: none;
+            background: transparent;
+            flex-shrink: 0;
+        }
+
+        .lastfm-link:hover {
+            opacity: 1;
+            color: var(--color-accent-2);
+            border-color: var(--color-accent-2);
+            transform: scale(1.06);
+        }
+
+        .lastfm-play-btn {
             background-color: var(--color-accent-2);
             color: #FFFFFF;
             width: 42px;
@@ -458,28 +488,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
             border: none;
-            flex-shrink: 0;
+            cursor: pointer;
             box-shadow: none;
-            text-decoration: none;
+            flex-shrink: 0;
         }
 
-        .lastfm-link:hover {
+        .lastfm-play-btn:hover {
             background-color: #2c5e7a;
             transform: scale(1.08);
-            box-shadow: none;
             color: #FFFFFF;
         }
 
-        .lastfm-link:active {
+        .lastfm-play-btn:active {
             transform: scale(0.95);
         }
 
-        .lastfm-link svg {
+        .lastfm-play-btn svg {
             width: 20px;
             height: 20px;
-            transform: translateX(1px); /* Visually centers the play triangle perfectly */
+            transform: translateX(1px); /* Perfect visual centering for play triangle */
+            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .lastfm-play-btn.playing svg {
+            transform: translateX(0); /* Centers the pause icon perfectly */
         }
 
         /* Actions Grid (Material Design Segmented List Container) */
@@ -710,6 +744,9 @@
     <audio id="avatar-audio" src="assets/survivor-meow.mp3"></audio>
 
     <script>
+        let activeAudio = null;
+        let previewUrl = null;
+
         async function fetchLastFmTrack() {
             const USERNAME = 'Smotry993';
             const API_KEY = 'a8b311fd965e7325a95e48eaecd721b9';
@@ -733,6 +770,23 @@
 
                 const lastFmCard = document.createElement('section');
                 lastFmCard.className = 'lastfm-card';
+
+                // Fetch song preview from iTunes API (CORS-enabled)
+                let hasPreview = false;
+                try {
+                    const iTunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(artist + ' ' + trackName)}&media=music&limit=1`;
+                    const iTunesRes = await fetch(iTunesUrl);
+                    if (iTunesRes.ok) {
+                        const iTunesData = await iTunesRes.json();
+                        if (iTunesData.resultCount > 0 && iTunesData.results[0].previewUrl) {
+                            previewUrl = iTunesData.results[0].previewUrl;
+                            hasPreview = true;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error fetching iTunes preview:', e);
+                }
+
                 lastFmCard.innerHTML = `
                     <h2 class="label-large">LAST_PLAYED</h2>
                     <div class="lastfm-content">
@@ -741,18 +795,73 @@
                             <p class="body-large track-name">${trackName}</p>
                             <p class="artist-name">${artist}</p>
                         </div>
-                        <a href="${trackUrl}" target="_blank" class="lastfm-link">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                        </a>
+                        <div class="lastfm-actions">
+                            <a href="${trackUrl}" target="_blank" class="lastfm-link" title="Открыть на Last.fm">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                                </svg>
+                            </a>
+                            ${hasPreview ? `
+                            <button class="lastfm-play-btn" id="lastfm-play-btn" title="Воспроизвести превью">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
 
                 bioCard.after(lastFmCard);
 
+                if (hasPreview) {
+                    const playBtn = document.getElementById('lastfm-play-btn');
+                    playBtn.addEventListener('click', () => {
+                        togglePlayPreview(playBtn);
+                    });
+                }
+
             } catch (error) {
                 console.error('Error fetching Last.fm track:', error);
+            }
+        }
+
+        function togglePlayPreview(btn) {
+            if (!previewUrl) return;
+
+            if (activeAudio && !activeAudio.paused) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0; // Rewind song to start from the beginning next time
+                btn.classList.remove('playing');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                `;
+            } else {
+                // Pause avatar cat audio if it was playing
+                const avatarAudio = document.getElementById('avatar-audio');
+                if (avatarAudio) avatarAudio.pause();
+
+                if (!activeAudio) {
+                    activeAudio = new Audio(previewUrl);
+                    activeAudio.volume = 0.3; // Set volume to 30% (comfortable background level)
+                    activeAudio.addEventListener('ended', () => {
+                        btn.classList.remove('playing');
+                        btn.innerHTML = `
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        `;
+                    });
+                }
+                activeAudio.play().catch(e => console.error('Preview playback failed:', e));
+                btn.classList.add('playing');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                `;
             }
         }
 
@@ -762,6 +871,21 @@
 
             if (avatar && audio) {
                 avatar.addEventListener('click', () => {
+                    // Pause Last.fm preview audio if it was playing to avoid overlap
+                    if (activeAudio && !activeAudio.paused) {
+                        activeAudio.pause();
+                        activeAudio.currentTime = 0; // Rewind song to start from the beginning next time
+                        const playBtn = document.getElementById('lastfm-play-btn');
+                        if (playBtn) {
+                            playBtn.classList.remove('playing');
+                            playBtn.innerHTML = `
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            `;
+                        }
+                    }
+
                     audio.currentTime = 0;
                     audio.play().catch(e => console.error('Audio playback failed:', e));
                 });
