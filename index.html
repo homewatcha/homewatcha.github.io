@@ -1082,8 +1082,9 @@ window.applyLastFmGradient = function(imgElement) {
 
                 const artist = track.artist['#text'];
                 const trackName = track.name;
-                const hasArt = track.image && track.image[2] && track.image[2]['#text'] !== '';
-                const albumArt = hasArt ? track.image[2]['#text'] : '';
+                const imageUrl = track.image && track.image[2] ? track.image[2]['#text'] : '';
+                const hasArt = imageUrl !== '' && !imageUrl.includes('2a96cbd8b46e442fc41c2b86b821562f');
+                const albumArt = hasArt ? imageUrl : '';
                 const trackUrl = track.url;
                 const isNowPlaying = track['@attr'] && track['@attr'].nowplaying === 'true';
                 const cardTitle = isNowPlaying ? 'NOW_PLAYING' : 'LAST_PLAYED';
@@ -1157,6 +1158,7 @@ window.applyLastFmGradient = function(imgElement) {
                     </div>
                 `;
 
+                let targetCard = existingCard;
                 if (existingCard) {
                     existingCard.innerHTML = cardContent;
                 } else {
@@ -1165,6 +1167,29 @@ window.applyLastFmGradient = function(imgElement) {
                     lastFmCard.className = 'lastfm-card';
                     lastFmCard.innerHTML = cardContent;
                     bioCard.after(lastFmCard);
+                    targetCard = lastFmCard;
+                }
+
+                if (!hasArt && targetCard) {
+                    targetCard.style.setProperty('--card-gradient', 'linear-gradient(270deg, hsl(0, 0%, 95%), hsl(0, 0%, 90%), hsl(0, 0%, 95%))');
+                    targetCard.style.setProperty('--dynamic-accent', 'hsl(0, 0%, 80%)');
+                    targetCard.style.setProperty('--card-text', '#111111');
+                    targetCard.style.setProperty('--card-text-secondary', 'rgba(0, 0, 0, 0.6)');
+                    targetCard.style.setProperty('--card-heading', 'rgba(0, 0, 0, 0.8)');
+                    targetCard.style.setProperty('--play-btn-bg', '#111111');
+                    targetCard.style.setProperty('--play-icon-color', '#FFFFFF');
+                    setTimeout(() => {
+                        targetCard.classList.add('has-gradient');
+                    }, 50);
+                } else if (targetCard) {
+                    targetCard.classList.remove('has-gradient');
+                    targetCard.style.removeProperty('--card-gradient');
+                    targetCard.style.removeProperty('--dynamic-accent');
+                    targetCard.style.removeProperty('--card-text');
+                    targetCard.style.removeProperty('--card-text-secondary');
+                    targetCard.style.removeProperty('--card-heading');
+                    targetCard.style.removeProperty('--play-btn-bg');
+                    targetCard.style.removeProperty('--play-icon-color');
                 }
 
                 if (hasPreview) {
