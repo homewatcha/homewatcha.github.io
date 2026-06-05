@@ -1082,9 +1082,17 @@ window.applyLastFmGradient = function(imgElement) {
 
                 const artist = track.artist['#text'];
                 const trackName = track.name;
-                const imageUrl = track.image && track.image[2] ? track.image[2]['#text'] : '';
+                // Берём картинку побольше (index 3), если есть, иначе index 2
+                const imageUrl = track.image && track.image[3] ? track.image[3]['#text'] : (track.image && track.image[2] ? track.image[2]['#text'] : '');
                 const hasArt = imageUrl !== '' && !imageUrl.includes('2a96cbd8b46e442fc41c2b86b821562f');
-                const albumArt = hasArt ? imageUrl : '';
+                
+                // Оптимизация обложки через ImageKit.io: конвертация в .avif и сжатие
+                const imagekitId = 'homewatcha'; // Укажите ваш ImageKit ID (например 'watcha'). Оставьте пустым для отключения.
+                const optimizedImageUrl = (hasArt && imagekitId) 
+                    ? `https://ik.imagekit.io/${imagekitId}/tr:f-avif,q-80/${imageUrl}` 
+                    : imageUrl;
+
+                const albumArt = hasArt ? optimizedImageUrl : '';
                 const trackUrl = track.url;
                 const isNowPlaying = track['@attr'] && track['@attr'].nowplaying === 'true';
                 const cardTitle = isNowPlaying ? 'NOW_PLAYING' : 'LAST_PLAYED';
