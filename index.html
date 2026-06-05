@@ -1085,11 +1085,24 @@ window.applyLastFmGradient = function(imgElement) {
                 const hasArt = track.image && track.image[2] && track.image[2]['#text'] !== '';
                 const albumArt = hasArt ? track.image[2]['#text'] : '';
                 const trackUrl = track.url;
+                const isNowPlaying = track['@attr'] && track['@attr'].nowplaying === 'true';
+                const cardTitle = isNowPlaying ? 'NOW_PLAYING' : 'LAST_PLAYED';
 
-                const bioCard = document.querySelector('.carousel-section');
-
-                const lastFmCard = document.createElement('section');
-                lastFmCard.className = 'lastfm-card';
+                let existingCard = document.querySelector('.lastfm-card');
+                if (existingCard) {
+                    const currentTitle = existingCard.querySelector('.label-large').textContent;
+                    const currentTrack = existingCard.querySelector('.track-name').textContent;
+                    const currentArtist = existingCard.querySelector('.artist-name').textContent;
+                    if (currentTitle === cardTitle && currentTrack === trackName && currentArtist === artist) {
+                        return; // No changes
+                    }
+                    
+                    // If song changed, pause preview
+                    if (window.activeAudio && !window.activeAudio.paused) {
+                        const btn = document.getElementById('lastfm-play-btn');
+                        if (btn) togglePlayPreview(btn);
+                    }
+                }
 
                 // Fetch song preview from iTunes API (CORS-enabled)
                 let hasPreview = false;
@@ -1107,8 +1120,8 @@ window.applyLastFmGradient = function(imgElement) {
                     console.error('Error fetching iTunes preview:', e);
                 }
 
-                lastFmCard.innerHTML = `
-                    <h2 class="label-large">LAST_PLAYED</h2>
+                const cardContent = `
+                    <h2 class="label-large">${cardTitle}</h2>
                     <div class="lastfm-content">
                         <div class="lastfm-art-wrapper">
                             <div class="lastfm-art-loader" style="${hasArt ? '' : 'display: none;'}">
@@ -1144,13 +1157,23 @@ window.applyLastFmGradient = function(imgElement) {
                     </div>
                 `;
 
-                bioCard.after(lastFmCard);
+                if (existingCard) {
+                    existingCard.innerHTML = cardContent;
+                } else {
+                    const bioCard = document.querySelector('.carousel-section');
+                    const lastFmCard = document.createElement('section');
+                    lastFmCard.className = 'lastfm-card';
+                    lastFmCard.innerHTML = cardContent;
+                    bioCard.after(lastFmCard);
+                }
 
                 if (hasPreview) {
                     const playBtn = document.getElementById('lastfm-play-btn');
-                    playBtn.addEventListener('click', () => {
-                        togglePlayPreview(playBtn);
-                    });
+                    if (playBtn) {
+                        playBtn.addEventListener('click', () => {
+                            togglePlayPreview(playBtn);
+                        });
+                    }
                 }
 
             } catch (error) {
@@ -1579,6 +1602,7 @@ window.applyLastFmGradient = function(imgElement) {
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchLastFmTrack();
+            setInterval(fetchLastFmTrack, 15000);
             setupAvatarAudio();
             setupWhoamiCarousel();
             setupDescriptionGimmick();
