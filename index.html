@@ -406,6 +406,8 @@
             gap: 6px;
             transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             user-select: none;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .card-hobbies .hobby-chip {
@@ -918,13 +920,13 @@ window.applyLastFmGradient = function(imgElement) {
                             <svg viewBox="0 0 24 24"><path d="M12,2L14.85,9.15L22,12L14.85,14.85L12,22L9.15,14.85L2,12L9.15,9.15L12,2Z" /></svg>SYSTEM_PASSIONS
                         </h2>
                         <div class="hobbies-grid">
-                            <span class="hobby-chip"><img src="assets/icons/osu.svg" class="hobby-chip-img" alt="osu!">osu!</span>
-                            <span class="hobby-chip"><img src="assets/icons/geometrydash.svg" class="hobby-chip-img" alt="Geometry Dash">Geometry Dash</span>
-                            <span class="hobby-chip"><img src="assets/icons/celeste.svg" class="hobby-chip-img" alt="Celeste">Celeste</span>
-                            <span class="hobby-chip"><img src="assets/icons/linux.svg" class="hobby-chip-img" alt="Linux">Linux</span>
-                            <span class="hobby-chip"><img src="assets/icons/exteragram.svg" class="hobby-chip-img" alt="Chats">exteraGram</span>
-                            <span class="hobby-chip"><img src="assets/icons/music.svg" class="hobby-chip-img" alt="Music">Music</span>
-                            <span class="hobby-chip"><img src="assets/icons/chats.svg" class="hobby-chip-img" alt="Chats">Chats</span>
+                            <a href="https://osu.ppy.sh/home/download" class="hobby-chip"><img src="assets/icons/osu.svg" class="hobby-chip-img" alt="osu!">osu!</a>
+                            <a href="https://store.steampowered.com/app/322170/Geometry_Dash/" class="hobby-chip"><img src="assets/icons/geometrydash.svg" class="hobby-chip-img" alt="Geometry Dash">Geometry Dash</a>
+                            <a href="https://store.steampowered.com/app/504230/Celeste/" class="hobby-chip"><img src="assets/icons/celeste.svg" class="hobby-chip-img" alt="Celeste">Celeste</a>
+                            <a href="https://www.google.com/search?q=linux" class="hobby-chip"><img src="assets/icons/linux.svg" class="hobby-chip-img" alt="Linux">Linux</a>
+                            <a href="https://exteragram.app/" class="hobby-chip"><img src="assets/icons/exteragram.svg" class="hobby-chip-img" alt="Chats">exteraGram</a>
+                            <a href="https://t.me/watchamusic" class="hobby-chip"><img src="assets/icons/music.svg" class="hobby-chip-img" alt="Music">Music</a>
+                            <a href="lmao xD" class="hobby-chip"><img src="assets/icons/chats.svg" class="hobby-chip-img" alt="Chats">Chats</a>
                         </div>
                     </div>
                 </div>
@@ -1096,7 +1098,7 @@ window.applyLastFmGradient = function(imgElement) {
                 const albumArt = hasArt ? optimizedImageUrl : '';
                 const trackUrl = track.url;
                 const isNowPlaying = track['@attr'] && track['@attr'].nowplaying === 'true';
-                const cardTitle = isNowPlaying ? 'NOW_PLAYING' : 'LAST_PLAYED';
+                const cardTitle = isNowPlaying ? 'LAST_PLAYED' : 'LAST_PLAYED';
 
                 let existingCard = document.querySelector('.lastfm-card');
                 if (existingCard) {
