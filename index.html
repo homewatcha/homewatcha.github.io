@@ -161,7 +161,7 @@
 
         /* Cards */
         .lastfm-card {
-            background: #272a2b; /* Pure white container card nested inside grey background */
+            background: #141718; /* Dark grey fallback background */
             padding: var(--spacing-large);
             border-radius: var(--border-radius-large);
             border: 1.5px solid rgba(255, 255, 255, 0.05); /* Soft premium outline */
@@ -1182,16 +1182,14 @@ window.applyLastFmGradient = function(imgElement) {
                 }
 
                 if (!hasArt && targetCard) {
-                    targetCard.style.setProperty('--card-gradient', 'linear-gradient(270deg, hsl(0, 0%, 95%), hsl(0, 0%, 90%), hsl(0, 0%, 95%))');
-                    targetCard.style.setProperty('--dynamic-accent', 'hsl(0, 0%, 80%)');
-                    targetCard.style.setProperty('--card-text', '#111111');
-                    targetCard.style.setProperty('--card-text-secondary', 'rgba(0, 0, 0, 0.6)');
-                    targetCard.style.setProperty('--card-heading', 'rgba(0, 0, 0, 0.8)');
-                    targetCard.style.setProperty('--play-btn-bg', '#111111');
-                    targetCard.style.setProperty('--play-icon-color', '#FFFFFF');
-                    setTimeout(() => {
-                        targetCard.classList.add('has-gradient');
-                    }, 50);
+                    targetCard.style.removeProperty('--card-gradient');
+                    targetCard.style.removeProperty('--dynamic-accent');
+                    targetCard.style.removeProperty('--card-text');
+                    targetCard.style.removeProperty('--card-text-secondary');
+                    targetCard.style.removeProperty('--card-heading');
+                    targetCard.style.removeProperty('--play-btn-bg');
+                    targetCard.style.removeProperty('--play-icon-color');
+                    targetCard.classList.remove('has-gradient');
                 } else if (targetCard) {
                     targetCard.classList.remove('has-gradient');
                     targetCard.style.removeProperty('--card-gradient');
